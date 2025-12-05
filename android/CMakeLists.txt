@@ -5,31 +5,22 @@ project(flutter_openssl_crypto)
 
 # Point to your custom 16KB OpenSSL
 set(OPENSSL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/android_openssl/ssl_3)
+set(LIBCRYPTO_PATH ${CMAKE_CURRENT_SOURCE_DIR}/android_openssl/ssl_3)
 set(OPENSSL_USE_STATIC_LIBS OFF)  # Use shared libcrypto.so
 
-# Alternative: Direct paths (more explicit)
+# Find for current ABI (CMake sets ANDROID_ABI)
 find_library(crypto-lib
         NAMES crypto libcrypto
-        PATHS ${CMAKE_CURRENT_SOURCE_DIR}/android_openssl/ssl_3
+        PATHS ${LIBCRYPTO_PATH}/${ANDROID_ABI}
         NO_DEFAULT_PATH
+        REQUIRED
 )
+message(STATUS "ABI: ${ANDROID_ABI}")
+message(STATUS "Searching: ${LIBCRYPTO_PATH}/${ANDROID_ABI}")
+message(STATUS "Found crypto-lib: ${crypto-lib}")
 
-message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
-message(STATUS "Looking for libcrypto in: ${CMAKE_CURRENT_SOURCE_DIR}/android_openssl/ssl_3")
-message(STATUS "Found: ${crypto-lib}")
-message(STATUS "Custom libcrypto: ${crypto-lib}")
 
 find_package(openssl REQUIRED CONFIG)
 add_library(${PROJECT_NAME} SHARED empty.c)
 # Link to YOUR 16KB libcrypto.so
 target_link_libraries(${PROJECT_NAME} PRIVATE ${crypto-lib})
-
-# Include OpenSSL headers (if needed)
-target_include_directories(${PROJECT_NAME} PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/android_openssl/ssl_3/include/openssl
-)
-
-# Include OpenSSL headers (if needed)
-target_include_directories(${PROJECT_NAME} PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/android_openssl/ssl_3/include/crypto
-)
