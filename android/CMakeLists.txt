@@ -23,13 +23,18 @@ find_library(crypto-lib
         NAMES crypto libcrypto libcrypto_3 libcrypto_3.so
         PATHS ${LIBCRYPTO_PATH}/${ANDROID_ABI}
         NO_DEFAULT_PATH
-        REQUIRED
 )
 
 message(STATUS "Found crypto-lib: ${crypto-lib}")
-# If symlink exists, resolve to real file
-if(crypto-lib MATCHES "libcrypto\\.so$")
-    get_filename_component(crypto-lib "${crypto-lib}" REALPATH)
+
+set(CRYPTO_PATH "${LIBCRYPTO_PATH}/${ANDROID_ABI}")
+set(CRYPTO_FILE "${CRYPTO_PATH}/libcrypto_3.so")
+
+if(EXISTS "${CRYPTO_FILE}")
+    set(crypto-lib "${CRYPTO_FILE}")
+    message(STATUS "✅ Direct found: ${crypto-lib}")
+else()
+    message(FATAL_ERROR "❌ libcrypto.so missing: ${CRYPTO_FILE}")
 endif()
 
 find_package(openssl REQUIRED CONFIG)
