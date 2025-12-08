@@ -20,7 +20,7 @@ message(STATUS "Searching: ${LIBCRYPTO_PATH}/${ANDROID_ABI}")
 
 # Find for current ABI (CMake sets ANDROID_ABI)
 find_library(crypto-lib
-        NAMES crypto libcrypto libcrypto_3 libcrypto_3.so
+        NAMES crypto libcrypto libcrypto libcrypto.so
         PATHS ${LIBCRYPTO_PATH}/${ANDROID_ABI}
         NO_DEFAULT_PATH
 )
@@ -28,7 +28,7 @@ find_library(crypto-lib
 message(STATUS "Found crypto-lib: ${crypto-lib}")
 
 set(CRYPTO_PATH "${LIBCRYPTO_PATH}/${ANDROID_ABI}")
-set(CRYPTO_FILE "${CRYPTO_PATH}/libcrypto_3.so")
+set(CRYPTO_FILE "${CRYPTO_PATH}/libcrypto.so")
 
 if(EXISTS "${CRYPTO_FILE}")
     set(crypto-lib "${CRYPTO_FILE}")
